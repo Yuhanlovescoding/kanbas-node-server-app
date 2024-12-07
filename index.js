@@ -8,10 +8,21 @@ import ModuleRoutes from "./Kanbas/Modules/routes.js";
 import AssignmentRoutes from "./Kanbas/Assignments/routes.js";
 import EnrollmentsRoutes from "./Kanbas/Enrollments/routes.js";
 import session from "express-session";
+import mongoose from "mongoose";
 import "dotenv/config";
 
-const app = express();
+const CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kanbas"
+mongoose.connect(CONNECTION_STRING)
 
+mongoose.connection.on("connected", () => {
+  console.log("Connected to MongoDB");
+});
+
+mongoose.connection.on("error", (err) => {
+  console.error("Error connecting to MongoDB:", err);
+});
+
+const app = express();
 
 const allowedOrigins = [
   "http://localhost:3000", 
