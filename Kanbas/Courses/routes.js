@@ -50,19 +50,34 @@ export default function CourseRoutes(app) {
   });
 
 
-  app.get("/api/courses/:courseId/assignments", (req, res) => {
+  app.get("/api/courses/:courseId/assignments", async (req, res) => {
     const { courseId } = req.params;
-    const assignments = assignmentsDao.findAssignmentsForCourse(courseId);
+    const assignments = await assignmentsDao.findAssignmentsForCourse(courseId);
     res.json(assignments);
   });
 
-  app.post("/api/courses/:courseId/assignments", (req, res) => {
+  app.post("/api/courses/:courseId/assignments", async (req, res) => {
+    // const { courseId } = req.params;
+    // const assignment = req.body;
+    // const newAssignment = assignmentsDao.createAssignment(courseId, assignment);
+    // res.send(newAssignment); 
     const { courseId } = req.params;
-    const assignment = req.body;
-    const newAssignment = assignmentsDao.createAssignment(courseId, assignment);
-    res.send(newAssignment); 
+    const assignment = {
+      ...req.body,
+      course: courseId,
+     
+    };
+    const newAssignment = await assignmentsDao.createAssignment(assignment);
+    res.status(201).json(newAssignment);
   });
 
+ 
+  const findUsersForCourse = async (req, res) => {
+    const { cid } = req.params;
+    const users = await enrollmentsDao.findUsersForCourse(cid);
+    res.json(users);
+  };
+  app.get("/api/courses/:cid/users", findUsersForCourse);
  
 }
 
